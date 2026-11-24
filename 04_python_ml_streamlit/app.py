@@ -4,6 +4,10 @@ import json
 import re
 import numpy as np
 import io
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+MODELS_DIR = BASE_DIR / "models"
 import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 # import nltk
@@ -37,12 +41,12 @@ st.markdown("""
 # --- 2. ΦΟΡΤΩΣΗ ΜΟΝΤΕΛΩΝ (ΜΕ CACHE) ---
 @st.cache_resource
 def load_models():
-    lr_syuzhet = joblib.load("models/tfidf_logreg_syuzhet.joblib")
-    lr_textblob = joblib.load("models/tfidf_logreg_textblob.joblib")
-    bilstm = tf.keras.models.load_model("models/bilstm_sentiment_model.keras")
-    with open("models/bilstm_tokenizer.json", "r", encoding="utf-8") as f:
+    lr_syuzhet = joblib.load(MODELS_DIR / "tfidf_logreg_syuzhet.joblib")
+    lr_textblob = joblib.load(MODELS_DIR / "tfidf_logreg_textblob.joblib")
+    bilstm = tf.keras.models.load_model(MODELS_DIR / "bilstm_sentiment_model.keras")
+    with open(MODELS_DIR / "bilstm_tokenizer.json", "r", encoding="utf-8") as f:
         tokenizer = json.load(f)
-        
+
     return lr_syuzhet, lr_textblob, bilstm, tokenizer
 
 with st.spinner("Φόρτωση Μοντέλων..."):
@@ -73,7 +77,9 @@ def to_padded(texts):
 
 # --- 3. ΠΛΑΪΝΗ ΜΠΑΡΑ (SIDEBAR) ---
 
-st.sidebar.image("C:/Users/mitso/Desktop/Master_Thesis_BI_NLP/assets/UTH-logo-english.png", width=200)
+logo_path = BASE_DIR.parent / "assets" / "UTH-logo-english.png"
+if logo_path.exists():
+    st.sidebar.image(str(logo_path), width=200)
 st.sidebar.markdown("---")
 st.sidebar.title("Ρυθμίσεις Ανάλυσης")
 
